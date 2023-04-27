@@ -1,14 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
-export default function App() {
+import ListScreen from './src/screens/ListScreen';
+import DetailScreen from './src/screens/DetailScreen';
+
+
+const Stack = createNativeStackNavigator();
+
+const MyStack = () => {
   return (
-    <View style={styles.container}>
-      <Text>HOAL</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Lista de elementos"
+          component={ListScreen}
+         
+        />
+
+        <Stack.Screen
+          name="Detalles"
+          component={DetailScreen}
+         
+        />
+
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
+
+export default MyStack
+
 
 const styles = StyleSheet.create({
   container: {
@@ -18,3 +41,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
