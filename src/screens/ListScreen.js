@@ -1,79 +1,100 @@
-import { StyleSheet, Text, View, Button, Image, ScrollView} from 'react-native'
+import { StyleSheet, Text, View, TouchableWithoutFeedback, Image, FlatList} from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { TouchableWithoutFeedback } from 'react-native'
-
+import Loader from '../components/Loader'
 
 const ListScreen = ({ navigation }) => {
 
-    const [photos, setPhotos] = useState([])
+  const [photos, setPhotos] = useState([])
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        const response = await fetch('https://picsum.photos/v2/list')
+        const response = await fetch(`https://picsum.photos/v2/list?page=${currentPage}&results=2`)
         const data = await response.json()
-        setPhotos(data)
+        setPhotos([...photos, ...data]);
+        setIsLoading (false)
       } catch (error) {
         console.error(error)
       }
     }
 
     fetchPhotos()
-    }, [])
+  }, [currentPage])
+
+  const renderItem = ({ item: photo }) => {
+    return (
+      <TouchableWithoutFeedback onPress={() => handleImagePress(photo)}>
+            
+          <View style={styles.imageContainer}>
+            <Image
+              style={styles.image}
+              source={{ uri: photo.download_url }}
+            />
     
-    const handleImagePress = (photo) => {
-    navigation.navigate('Detalles', {photo});
+            <View style={styles.authorContainer}>
+              <Text style={styles.authorText}>{photo.author}</Text>
+            </View>
+        
+          </View>
+        
+
+
+        </TouchableWithoutFeedback>
+
+    )
+
+  }
+
+   const loadMoreItem = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+    
+  const handleImagePress = (photo) => {
+    navigation.navigate('Detalles', { photo });
   
   }
 
   return (
     
-    <ScrollView>
-    <View style={styles.container}>
-          {photos.map(photo => (
-            <TouchableWithoutFeedback key={photo.id} onPress={() => handleImagePress(photo)}>
-            
-        <View key={photo.id} style={styles.imageContainer}>
-        <Image
-          key={photo.id}
-          style={styles.image}
-                  source={{ uri: photo.download_url }}
-          />
-    
-      <View style={styles.authorContainer}>
-        <Text style={styles.authorText}>{photo.author}</Text>
-      </View>
+    <FlatList data={photos} renderItem={renderItem}
+      keyExtractor={(photo) => photo.id}
+      ListFooterComponent={isLoading ? <Loader /> : null}
+      onEndReached={loadMoreItem}
+      onEndReachedThreshold={0}
+      numColumns={2}
+
+    />
         
-        </View>
-         </TouchableWithoutFeedback>
-      ))}
-          </View>
-   
-    </ScrollView>  
     )
 }
-
-
 
 const styles = StyleSheet.create({
 
 container: {
     flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-
+  marginTop: 25,
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'space-evenly',
+  alignContent: 'center',
+  padding: 10,
   },
-   imageContainer: {
-     position: 'relative',
-     marginBottom: 10,
-    
+  imageContainer: {
+  flex: 1,
+  position: 'relative',
+  marginBottom: 30,
+  alignItems: 'center',
+  margin: 5,
   },
   image: {
-    width: 150,
-    height: 150,
-    borderRadius: 5
+    width: '100%',
+    height: 200,
+  borderRadius: 5,
 
   },
   authorContainer: {
