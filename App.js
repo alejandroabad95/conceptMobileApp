@@ -12,16 +12,22 @@ const Stack = createNativeStackNavigator();
 const MyStack = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+      screenOptions={{
+          headerBackTitleVisible: false,
+        }}
+      >
         <Stack.Screen
           name="Lista de elementos"
           component={ListScreen}
-         
         />
 
         <Stack.Screen
-          name="Detalles"
+          name= "Detalles"
           component={DetailScreen}
+          options={({ route}) => ({
+            title: route.params.photo.author,
+          })}
          
         />
 

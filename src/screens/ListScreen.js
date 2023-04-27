@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, Button, Image, ScrollView} from 'react-native'
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
+import { TouchableWithoutFeedback } from 'react-native'
 
 
 const ListScreen = ({ navigation }) => {
@@ -19,27 +20,35 @@ const ListScreen = ({ navigation }) => {
 
     fetchPhotos()
     }, [])
+    
+    const handleImagePress = (photo) => {
+    navigation.navigate('Detalles', {photo});
+  
+  }
 
-
-    return (
+  return (
+    
     <ScrollView>
-     <Button
-        onPress={() => navigation.navigate('Detalles')}
-        title='Pantalla Siguiente'
-      />  
-
     <View style={styles.container}>
-   
-      <Text style={styles.title}>Lista de Fotos</Text>
-      {photos.map(photo => (
+          {photos.map(photo => (
+            <TouchableWithoutFeedback key={photo.id} onPress={() => handleImagePress(photo)}>
+            
+        <View key={photo.id} style={styles.imageContainer}>
         <Image
           key={photo.id}
           style={styles.image}
-          source={{ uri: photo.download_url }}
-        />
+                  source={{ uri: photo.download_url }}
+          />
+    
+      <View style={styles.authorContainer}>
+        <Text style={styles.authorText}>{photo.author}</Text>
+      </View>
+        
+        </View>
+         </TouchableWithoutFeedback>
       ))}
-     
-    </View>
+          </View>
+   
     </ScrollView>  
     )
 }
@@ -52,20 +61,34 @@ container: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
+
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+   imageContainer: {
+     position: 'relative',
+     marginBottom: 10,
+    
   },
   image: {
     width: 150,
     height: 150,
-    marginBottom: 5,
-  },
+    borderRadius: 5
 
+  },
+  authorContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 5,
+    borderRadius: 5,
+  },
+  authorText: {
+    color: '#fff',
+    fontSize: 12,
+  },
 
 })
  
