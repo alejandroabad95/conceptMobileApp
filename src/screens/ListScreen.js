@@ -6,29 +6,28 @@ const ListScreen = ({ navigation }) => {
 
   const [photos, setPhotos] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
-  const [refreshing, setRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
+  //pull to refresh
+  const [isRefreshing, setRefreshing] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        const response = await fetch(`https://picsum.photos/v2/list?page=${currentPage}&results=6`)
+        const response = await fetch(`https://picsum.photos/v2/list?page=${currentPage}&results=`)
+        // const response = await fetch(`https://pic`)
         const data = await response.json()
         setPhotos([...photos, ...data]);
         setIsLoading (false)
       } catch (error) {
         console.error(error)
+        
       }
     }
 
-    // fetchPhotos()
-
-    setTimeout(() => {
-    fetchPhotos();
-  }, 10000);
-
-
+  
+      fetchPhotos()
 
   }, [currentPage])
 
@@ -63,29 +62,47 @@ const ListScreen = ({ navigation }) => {
     navigation.navigate('Detalles', { photo });
   }
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
+  const handleRefresh = async () => {
+    setRefreshing(true) 
+    setCurrentPage(1) 
+    setPhotos([]) 
+    try {
+      const response = await fetch(`https://picsum.photos/v2/list?page=1&results=10`);
+      const data = await response.json();
+      setPhotos(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
       setRefreshing(false);
-    }, 2000);
-  }, []);
-
-
+    }
+  }
 
   return (
-  <View style={styles.container}>
-    <FlatList
-      contentContainerStyle={styles.listContainer}
-      data={photos} renderItem={renderItem}
-      keyExtractor={(item, index) => `${item.id}-${index}`}
-      ListFooterComponent={isLoading ? <Loader /> : null}
-      onEndReached={loadMoreItem}
-      onEndReachedThreshold={0}
+    <View style={styles.container}>
+     
+        <FlatList
+          contentContainerStyle={styles.listContainer}
+          data={photos}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
+          ListFooterComponent={isLoading && !isRefreshing ? <Loader /> : null}
+          onEndReached={loadMoreItem}
+          onEndReachedThreshold={0}
         numColumns={2}
-      refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            colors={['white']}
+            progressBackgroundColor={'black'}
+            tintColor={'white'}
+          />
         }
-      />
+
+        />
+        
+      
   </View>
         
     )
@@ -131,6 +148,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center'
   },
+
 })
+
  
 export default ListScreen
