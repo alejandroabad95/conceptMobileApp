@@ -61,11 +61,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
         alignItems: 'center',
-        marginTop: 0
+        marginTop: 0,
+        backgroundColor: '#3B5998'
     },
     image: {
         width: 350,
-        height: 350,
+      height: 350,
+        marginTop: 20,
         borderRadius: 15,
     },
     modalContainer: {

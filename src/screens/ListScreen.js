@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableWithoutFeedback, Image, FlatList} from 'react-native'
+import { StyleSheet, Text, View, TouchableWithoutFeedback, Image, FlatList, RefreshControl} from 'react-native'
 import React, { useState, useEffect } from 'react'
 import Loader from '../components/Loader'
 
@@ -6,12 +6,14 @@ const ListScreen = ({ navigation }) => {
 
   const [photos, setPhotos] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
+  const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        const response = await fetch(`https://picsum.photos/v2/list?page=${currentPage}&results=2`)
+        const response = await fetch(`https://picsum.photos/v2/list?page=${currentPage}&results=6`)
         const data = await response.json()
         setPhotos([...photos, ...data]);
         setIsLoading (false)
@@ -20,14 +22,22 @@ const ListScreen = ({ navigation }) => {
       }
     }
 
-    fetchPhotos()
+    // fetchPhotos()
+
+    setTimeout(() => {
+    fetchPhotos();
+  }, 10000);
+
+
+
   }, [currentPage])
 
   const renderItem = ({ item: photo }) => {
     return (
       <TouchableWithoutFeedback onPress={() => handleImagePress(photo)}>
-            
-          <View style={styles.imageContainer}>
+        <View style={styles.itemContainer}>
+        <View style={styles.imageContainer}>
+          
             <Image
               style={styles.image}
               source={{ uri: photo.download_url }}
@@ -36,81 +46,91 @@ const ListScreen = ({ navigation }) => {
             <View style={styles.authorContainer}>
               <Text style={styles.authorText}>{photo.author}</Text>
             </View>
-        
+        </View>
           </View>
-        
-
-
         </TouchableWithoutFeedback>
 
     )
 
   }
 
-   const loadMoreItem = () => {
+  const loadMoreItem = () => {
+    setIsLoading(true);
     setCurrentPage(currentPage + 1);
   };
-
     
   const handleImagePress = (photo) => {
     navigation.navigate('Detalles', { photo });
-  
   }
 
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
+
+
   return (
-    
-    <FlatList data={photos} renderItem={renderItem}
-      keyExtractor={(photo) => photo.id}
+  <View style={styles.container}>
+    <FlatList
+      contentContainerStyle={styles.listContainer}
+      data={photos} renderItem={renderItem}
+      keyExtractor={(item, index) => `${item.id}-${index}`}
       ListFooterComponent={isLoading ? <Loader /> : null}
       onEndReached={loadMoreItem}
       onEndReachedThreshold={0}
-      numColumns={2}
-
-    />
+        numColumns={2}
+      refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
+  </View>
         
     )
 }
 
 const styles = StyleSheet.create({
-
-container: {
+  container: {
     flex: 1,
-  marginTop: 25,
-  justifyContent: 'center',
-  alignItems: 'center',
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  justifyContent: 'space-evenly',
-  alignContent: 'center',
-  padding: 10,
+    backgroundColor: '#3B5998',
+    paddingHorizontal: 0,
+  },
+  listContainer: {
+    marginTop: 70,
+  },
+  itemContainer: {
+    flex: 1,
+    marginBottom: 30
   },
   imageContainer: {
-  flex: 1,
-  position: 'relative',
-  marginBottom: 30,
-  alignItems: 'center',
-  margin: 5,
+    flex: 1,
+    position: 'relative',
+    alignItems: 'center',
+    width: 'auto'
   },
   image: {
-    width: '100%',
-    height: 200,
-  borderRadius: 5,
-
+    width: 150,
+    height: 150,
+    borderRadius: 5,
   },
   authorContainer: {
     position: 'absolute',
     bottom: 0,
-    left: 0,
-    width: '100%',
+    left: 'auto',
+    width: 150,
+    height: 40,
+    borderBottomLeftRadius: 5,
+    borderBottomRightRadius: 5,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: 5,
-    borderRadius: 5,
+    padding: 10
   },
   authorText: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 14,
+    textAlign: 'center'
   },
-
 })
  
 export default ListScreen

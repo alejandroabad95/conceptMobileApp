@@ -1,7 +1,7 @@
 import React from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
 
-const App = () => (
+const Loader = () => (
   <View style={[styles.container, styles.horizontal]}>
     <ActivityIndicator size="large" />
   </View>
@@ -10,7 +10,8 @@ const App = () => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    marginTop: 30
   },
   horizontal: {
     flexDirection: 'row',
@@ -19,4 +20,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Loader;
