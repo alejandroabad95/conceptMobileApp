@@ -1,32 +1,37 @@
 import { StyleSheet, Text, View, TouchableWithoutFeedback, Image, FlatList, RefreshControl} from 'react-native'
 import React, { useState, useEffect } from 'react'
 import Loader from '../components/Loader'
+import Error from '../components/Error'
 
 const ListScreen = ({ navigation }) => {
 
   const [photos, setPhotos] = useState([])
   const [currentPage, setCurrentPage] = useState(1);
 
-  //pull to refresh
+  // states loading and pull to refresh
   const [isRefreshing, setRefreshing] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
 
+  //errors
+
+  const [error, setError] = useState (false)
+
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        const response = await fetch(`https://picsum.photos/v2/list?page=${currentPage}&results=`)
-        // const response = await fetch(`https://pic`)
+        // const response = await fetch(`https://picsum.photos/v2/list?page=${currentPage}&results=`)
+        const response = await fetch(`https://pic`)
+
         const data = await response.json()
         setPhotos([...photos, ...data]);
-        setIsLoading (false)
+        setIsLoading(false)
       } catch (error) {
-        console.error(error)
+        setError(true);
         
       }
     }
 
-  
       fetchPhotos()
 
   }, [currentPage])
@@ -71,15 +76,22 @@ const ListScreen = ({ navigation }) => {
       const data = await response.json();
       setPhotos(data);
     } catch (error) {
-      console.error(error);
+       setError(true);
     } finally {
       setRefreshing(false);
     }
   }
 
+  const handleRetry = () => {
+    setError(false);
+    setCurrentPage(1);
+  }
+
   return (
     <View style={styles.container}>
-     
+      {error ? (
+        <Error onRetry={handleRetry} />
+      ) : (
         <FlatList
           contentContainerStyle={styles.listContainer}
           data={photos}
@@ -88,19 +100,21 @@ const ListScreen = ({ navigation }) => {
           ListFooterComponent={isLoading && !isRefreshing ? <Loader /> : null}
           onEndReached={loadMoreItem}
           onEndReachedThreshold={0}
-        numColumns={2}
+          numColumns={2}
         
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            colors={['white']}
-            progressBackgroundColor={'black'}
-            tintColor={'white'}
-          />
-        }
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              colors={['white']}
+              progressBackgroundColor={'black'}
+              tintColor={'white'}
+            />
+          }
 
         />
+          
+      )}
         
       
   </View>
@@ -111,8 +125,7 @@ const ListScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#3B5998',
-    paddingHorizontal: 0,
+    backgroundColor: '#3B5998'
   },
   listContainer: {
     marginTop: 70,
@@ -147,8 +160,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     textAlign: 'center'
-  },
-
+  }
 })
 
  

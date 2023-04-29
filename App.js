@@ -1,13 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View, StatusBar} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import { createStackNavigator } from '@react-navigation/stack';
 
 import ListScreen from './src/screens/ListScreen';
 import DetailScreen from './src/screens/DetailScreen';
 
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 const MyStack = () => {
 
@@ -15,18 +15,24 @@ const MyStack = () => {
 
   return (
 
-    
     <NavigationContainer>
           <Stack.Navigator
-          screenOptions={{
+        screenOptions={{
           headerStyle: { backgroundColor: '#3B5998' },
+          
+          
         }}
       >
         <Stack.Screen
           name="Lista de elementos"
           component={ListScreen}
           options={
-            {headerShown: false}
+            {
+              headerShown: false,
+              
+      
+            }
+            
           }
           
         />
@@ -34,9 +40,11 @@ const MyStack = () => {
         <Stack.Screen
           name= "Detalles"
           component={DetailScreen}
-          options={({ route}) => ({
+          options={({ route }) => ({
             title: route.params.photo.author,
-            headerTintColor: '#fff'
+            headerTintColor: '#fff',
+            headerBackTitleVisible: null
+            
           })}
          
           />
