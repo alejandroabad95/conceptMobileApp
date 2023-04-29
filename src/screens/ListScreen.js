@@ -20,8 +20,7 @@ const ListScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        // const response = await fetch(`https://picsum.photos/v2/list?page=${currentPage}&results=`)
-        const response = await fetch(`https://pic`)
+        const response = await fetch(`https://picsum.photos/v2/list?page=${currentPage}&results=`)
 
         const data = await response.json()
         setPhotos([...photos, ...data]);

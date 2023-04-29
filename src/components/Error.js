@@ -23,9 +23,6 @@ const Error = ({ onRetry }) => (
     </View>
 );
 
-
-
-
 const styles = StyleSheet.create({
   
   errorContainer: {
