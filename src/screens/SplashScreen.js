@@ -8,12 +8,12 @@ const SplashScreen = ({ navigation }) => {
   useEffect(() => {
     setTimeout(() => {
       navigation.navigate('Lista de elementos');
-    }, 1000); 
+    }, 5000); 
   }, []);
 
   return (
     <View style={styles.container}>
-      <Image source={require('../../assets/favicon.png')} style={styles.image} />
+      <Image source={require('../../assets/splashConcepMobileApp.gif')} style={styles.image} />
     </View>
   );
 };
@@ -22,12 +22,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     backgroundColor: '#3B5998',
   },
   image: {
-    width: 150,
-    height: 150,
+    marginTop: 250,
+    width: 250,
+    height: 250,
   },
 });
 

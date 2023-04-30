@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
     },
     closeButton: {
     position: 'absolute',
-    top: 40,
-    left: 0,
+    top: 50,
+    left: 15,
     width: 50,
     height: 50,
     borderRadius: 5,
@@ -89,9 +89,14 @@ const styles = StyleSheet.create({
   
   },
     closeText: {
-        fontSize: 20,
+        fontSize: 25,
         fontWeight: 'bold',
         color: 'white',
+        textShadowColor: 'black',
+        textShadowOffset: {width: 1, height: 1},
+        textShadowRadius: 5,
+        
+        
     },
     modalImage: {
         width: '100%',

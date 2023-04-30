@@ -56,15 +56,6 @@ const MyStack = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'blue',
-  },
-});
-
-
-
 export default MyStack
 
 
